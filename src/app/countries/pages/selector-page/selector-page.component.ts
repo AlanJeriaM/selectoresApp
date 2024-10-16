@@ -13,6 +13,7 @@ export class SelectorPageComponent implements OnInit{
 
   public myForm: FormGroup;
   public countriesByRegion : SmallCountry[] = [];
+  public borders: string[] = []
 
 
   constructor(
@@ -23,7 +24,7 @@ export class SelectorPageComponent implements OnInit{
     this.myForm =  this.fb.group({
       region: ['', Validators.required],
       country: ['', Validators.required],
-      borders: ['', Validators.required],
+      border : ['', Validators.required],
 
 
     })
@@ -32,6 +33,7 @@ export class SelectorPageComponent implements OnInit{
 
   ngOnInit(): void {
     this.onRegionChanged();
+    this.onCountryChanged();
   }
 
   get regions(): Region[] {
@@ -43,6 +45,7 @@ export class SelectorPageComponent implements OnInit{
     this.myForm.get('region')!.valueChanges
       .pipe(
         tap( () => this.myForm.get('country')!.setValue('') ),
+        tap( () => this.borders = []  ),
         switchMap( (region) => this.countriesService.getCountriesByRegion( region ) )
       )
     .subscribe( countries =>{
@@ -50,6 +53,20 @@ export class SelectorPageComponent implements OnInit{
     })
   }
 
+  onCountryChanged(): void {
+    this.myForm.get('country')!.valueChanges
+    .pipe(
+      tap( () => this.myForm.get('border')!.setValue('') ),
+      switchMap( (alphaCode ) => this.countriesService.getCountryByAlphaCode( alphaCode ) )
+    )
+  .subscribe( country =>{
+    //console.log({ borders: country.borders });
+    this.borders = country.borders;
+
+  })
+
+
+  }
 
 
 }

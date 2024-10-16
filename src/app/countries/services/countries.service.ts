@@ -23,7 +23,7 @@ getCountriesByRegion(region : Region): Observable <SmallCountry[]>{
 
   const url: string = `${ this.baseUrl }/region/${ region }?fields=cca3,name,borders`
 
-  return this.http.get<Country[]>(url)
+  return this.http.get<Country[]>( url )
     .pipe(
       map( countries => countries.map( country => ({
         name: country.name.common,
@@ -33,5 +33,22 @@ getCountriesByRegion(region : Region): Observable <SmallCountry[]>{
     )
 
 }
+
+getCountryByAlphaCode ( alphaCode: string ): Observable<SmallCountry> {
+
+
+  if( !alphaCode ) return of();
+
+  const url = `${ this.baseUrl }/alpha/${ alphaCode }?fields=cca3,name,borders`;
+  return this.http.get<Country>( url )
+    .pipe(
+      map( country => ({
+        name: country.name.common,
+        cca3: country.cca3,
+        borders: country.borders ?? [],
+      }) ),
+    )
+}
+
 
 }
