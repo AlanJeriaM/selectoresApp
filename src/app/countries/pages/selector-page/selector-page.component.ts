@@ -13,7 +13,7 @@ export class SelectorPageComponent implements OnInit{
 
   public myForm: FormGroup;
   public countriesByRegion : SmallCountry[] = [];
-  public borders: string[] = []
+  public borders: SmallCountry[] = []
 
 
   constructor(
@@ -57,16 +57,15 @@ export class SelectorPageComponent implements OnInit{
     this.myForm.get('country')!.valueChanges
     .pipe(
       tap( () => this.myForm.get('border')!.setValue('') ),
-      switchMap( (alphaCode ) => this.countriesService.getCountryByAlphaCode( alphaCode ) )
+      switchMap( (alphaCode ) => this.countriesService.getCountryByAlphaCode( alphaCode ) ),
+      switchMap( (country) => this.countriesService.getCountryBordersByCodes( country.borders ) )
     )
-  .subscribe( country =>{
+  .subscribe( countries =>{
     //console.log({ borders: country.borders });
-    this.borders = country.borders;
-
+    this.borders = countries;
   })
-
-
   }
+
 
 
 }
